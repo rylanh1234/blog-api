@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog API</title>
+</head>
+<body>
+    <h1>Blog API</h1>
+    <div id="userName"></div>
+
+    <script>
+        async function loadUser() {
+            const res = await fetch("/api/user");
+            const user = await res.json();
+            const userName = document.getElementById("userName");
+            userName.textContent = user[0].name;
+        }
+        loadUser();
+    </script>
+</body>
+</html>

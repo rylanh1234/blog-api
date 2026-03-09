@@ -8,15 +8,30 @@
 <body>
     <h1>Blog API</h1>
     <div id="userName"></div>
+    <div id="blogPosts">
+        <ul id="postsList"></ul>
+    </div>
 
     <script>
         async function loadUser() {
             const res = await fetch("/api/user");
             const user = await res.json();
             const userName = document.getElementById("userName");
-            userName.textContent = user[0].name;
+            userName.textContent = "Welcome Back " + user[0].name;
+        }
+        async function loadPosts() {
+            const res = await fetch("/api/posts");
+            const posts = await res.json();
+            posts.map((post) => {
+                const postsLi = document.createElement("li");
+                const postsList = document.getElementById("postsList");
+                postsLi.textContent = post.title;
+                postsList.appendChild(postsLi);
+                console.log(post)
+            })
         }
         loadUser();
+        loadPosts();
     </script>
 </body>
 </html>

@@ -19,6 +19,7 @@ model User {
   email String  @unique
   name  String?
   posts Post[]
+  comments Comment[]
 }
 
 model Post { 
@@ -28,4 +29,13 @@ model Post {
   published Boolean @default(false) 
   author    User    @relation(fields: [authorId], references: [id]) 
   authorId  Int
+  createdAt String?
+}
+
+model Comment { 
+  id        Int     @id @default(autoincrement()) 
+  content   String?
+  author    User    @relation(fields: [authorId], references: [id]) 
+  authorId  Int
+  createdAt String?
 } 

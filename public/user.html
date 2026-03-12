@@ -24,10 +24,12 @@
             const posts = await res.json();
             posts.map((post) => {
                 const postsLi = document.createElement("li");
+                const postsA = document.createElement("a");
                 const postsList = document.getElementById("postsList");
-                postsLi.textContent = post.title;
+                postsA.textContent = post.title;
+                postsA.href = "/" + post.title.toLowerCase().replace(" ", "-");
+                postsLi.appendChild(postsA)
                 postsList.appendChild(postsLi);
-                console.log(post)
             })
         }
         loadUser();

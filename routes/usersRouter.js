@@ -4,6 +4,6 @@ const usersRouter = Router();
 
 usersRouter.get("/user", usersController.usersGet);
 usersRouter.get("/posts", usersController.postsGet);
-usersRouter.get("/post/:postid", usersController.postByIdGet);
+usersRouter.get("/posts/:slug", usersController.postBySlugGet);
 
 module.exports = usersRouter;

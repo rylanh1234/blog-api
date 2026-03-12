@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog API</title>
+</head>
+<body>
+    <h1>Blog API</h1>
+    <h3 id="postTitle"></h3>
+
+     <script>
+        async function loadPost() {
+            const slug = window.location.pathname.split("/")[1];
+            const res = await fetch(`/api/posts/${slug}`);
+            const post = await res.json();
+            const postTitle = document.getElementById("postTitle");
+            postTitle.textContent = post.title;
+        }
+
+        loadPost();
+    </script>
+</body>
+</html>

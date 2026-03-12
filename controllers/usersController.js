@@ -10,11 +10,11 @@ exports.postsGet = async (req, res) => {
     res.json(posts);
 }
 
-exports.postByIdGet = async (req, res) => {
+exports.postBySlugGet = async (req, res) => {
     const prisma = require("../app");
-    const { postId } = req.params;
+    const { slug } = req.params;
     const post = await prisma.post.findUnique({
-        where: { id: postId }
+        where: { slug: slug }
     });
-    res.json(post)
+    res.json(post);
 }

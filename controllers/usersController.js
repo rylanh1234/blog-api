@@ -14,7 +14,13 @@ exports.postBySlugGet = async (req, res) => {
     const prisma = require("../app");
     const { slug } = req.params;
     const post = await prisma.post.findUnique({
-        where: { slug: slug }
+        where: { slug: slug },
+        include: { 
+            author: true,
+            comments: {
+                include: { author: true }
+            }
+        }
     });
     res.json(post);
 }

@@ -7,15 +7,33 @@
 </head>
 <body>
     <h1>Blog API</h1>
-    <h3 id="postTitle"></h3>
+    <h3 id="postTitle"></h3><h4 id="postAuthor"></h4>
+    <p id="postContent"></p>
+    <div id="postComments">
+        <ul id="postCommentsList"></ul>
+    </div>
 
      <script>
         async function loadPost() {
             const slug = window.location.pathname.split("/")[1];
             const res = await fetch(`/api/posts/${slug}`);
             const post = await res.json();
+
             const postTitle = document.getElementById("postTitle");
             postTitle.textContent = post.title;
+
+            const postAuthor = document.getElementById("postAuthor");
+            postAuthor.textContent = "by " + post.author.name;
+
+            const postContent = document.getElementById("postContent");
+            postContent.textContent = post.content;
+
+            post.comments.map((comment) => {
+                const postCommentsLi = document.createElement("li");
+                const postCommentsList = document.getElementById("postCommentsList");
+                postCommentsLi.textContent = comment.author.name + " · MM/DD/YYYY : " + comment.content;
+                postCommentsList.appendChild(postCommentsLi);
+            })
         }
 
         loadPost();

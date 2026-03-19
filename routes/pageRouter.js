@@ -6,6 +6,10 @@ pageRouter.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../public/user.html"));
 })
 
+pageRouter.get("/create", async (req,res) => {
+    res.sendFile(path.join(__dirname, "../public/create.html"));
+})
+
 pageRouter.get("/:slug", async (req, res) => {
     res.sendFile(path.join(__dirname, "../public/post.html"));
 })

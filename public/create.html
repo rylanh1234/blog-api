@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog API</title>
+</head>
+<body>
+    <h1><a href="/">Blog API</a></h1>
+    <form id ="createPostForm">
+        <div class="inputContainer">
+            <div class="formGroup">
+                <label for="postTitle">Title</label>
+                <input type="text" id="postTitle" name="postTitle" required>
+            </div>
+            <div class="formGroup">
+                <input type="text" id="postContent" name="postContent" required>
+            </div>
+        </div>
+        <button type="submit">Post Blog</button>
+    </form>
+    <script>
+        async function loadCreatePost() {
+            const createPostForm = document.getElementById("createPostForm");
+            createPostForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const data = Object.fromEntries(new FormData(createPostForm));
+                const res = await fetch(`/api/posts`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+                const post = await res.json();
+                window.location.href = "/";
+            })
+        }
+
+        loadCreatePost();
+    </script>
+</body>
+</html>

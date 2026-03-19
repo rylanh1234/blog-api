@@ -44,3 +44,20 @@ exports.commentPost = async (req, res) => {
     })
     res.json(comment);
 }
+
+exports.postsPost = async (req, res) => {
+    const prisma = require("../app");
+    const post = await prisma.post.create({
+        data: {
+            author: {
+                connect: { id: 1 }
+            },
+            title: req.body.postTitle,
+            content: req.body.postContent,
+            published: true,
+            createdAt: Date(),
+            slug: req.body.postTitle.toLowerCase().replace(" ", "-")
+        }
+    })
+    res.json(post);
+}

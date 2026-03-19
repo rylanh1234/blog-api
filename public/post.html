@@ -6,10 +6,19 @@
     <title>Blog API</title>
 </head>
 <body>
-    <h1>Blog API</h1>
-    <h3 id="postTitle"></h3><h4 id="postAuthor"></h4>
+    <h1><a href="/">Blog API</a></h1>
+    <h2 id="postTitle"></h2><h4 id="postAuthor"></h4>
     <p id="postContent"></p>
     <div id="postComments">
+        <h2>Comments</h2>
+        <form id ="postCommentsForm">
+            <div class="inputContainer">
+                <div class="formGroup">
+                    <input type="text" id="commentText" name="commentText" placeholder="Add a comment">
+                </div>
+            </div>
+            <button type="submit">Post comment</button>
+        </form>
         <ul id="postCommentsList"></ul>
     </div>
 
@@ -33,6 +42,19 @@
                 const postCommentsList = document.getElementById("postCommentsList");
                 postCommentsLi.textContent = comment.author.name + " · MM/DD/YYYY : " + comment.content;
                 postCommentsList.appendChild(postCommentsLi);
+            })
+
+            const postCommentsForm = document.getElementById("postCommentsForm");
+            postCommentsForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const data = Object.fromEntries(new FormData(postCommentsForm)); // get input from form and convert the pair into JS object
+                const res = await fetch(`/api/posts/${slug}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }, // specify JSON
+                    body: JSON.stringify(data) // JS object into JS string
+                });
+                const comment = await res.json();
+                window.location.reload(); // refresh page after posting comment
             })
         }
 

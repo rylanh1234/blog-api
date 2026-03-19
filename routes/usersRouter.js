@@ -5,5 +5,6 @@ const usersRouter = Router();
 usersRouter.get("/user", usersController.usersGet);
 usersRouter.get("/posts", usersController.postsGet);
 usersRouter.get("/posts/:slug", usersController.postBySlugGet);
+usersRouter.post("/posts/:slug", usersController.commentPost);
 
 module.exports = usersRouter;

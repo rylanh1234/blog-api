@@ -24,3 +24,23 @@ exports.postBySlugGet = async (req, res) => {
     });
     res.json(post);
 }
+
+exports.commentPost = async (req, res) => {
+    const prisma = require("../app");
+    const { slug } = req.params;
+    const comment = await prisma.post.update({
+        where: { slug: slug},
+        data: {
+            comments: {
+                create: [{
+                    author: {
+                        connect: { id: 1 }
+                    },
+                    content: req.body.commentText,
+                    createdAt: Date()
+                }]
+            }
+        }
+    })
+    res.json(comment);
+}

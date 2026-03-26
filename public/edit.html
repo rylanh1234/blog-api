@@ -21,14 +21,22 @@
         <button type="submit" name="post">Post Blog</button>
     </form>
     <script>
-        async function loadCreatePost() {
+        async function loadEditPost() {
+            const slug = window.location.pathname.split("/")[1];
             const createPostForm = document.getElementById("createPostForm");
+            const postTitle = document.getElementById("postTitle");
+            const postContent = document.getElementById("postContent");
+            const res = await fetch(`/api/posts/${slug}`);
+            const savedPost = await res.json();
+            postTitle.value = savedPost.title;
+            postContent.value = savedPost.content;
+
             createPostForm.addEventListener("submit", async (e) => {
                 e.preventDefault();
                 const data = Object.fromEntries(new FormData(createPostForm));
                 Object.assign(data, { btnName: e.submitter.name });
-                const res = await fetch(`/api/posts`, {
-                    method: "POST",
+                const res = await fetch(`/api/posts/${slug}`, {
+                    method: "PATCH",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
@@ -37,7 +45,7 @@
             })
         }
 
-        loadCreatePost();
+        loadEditPost();
     </script>
 </body>
 </html>

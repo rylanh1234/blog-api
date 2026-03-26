@@ -8,9 +8,15 @@
 <body>
     <h1>Blog API</h1>
     <div id="userName"></div>
-    <a href="/create">Create</div>
+    <a href="/create">Create</a>
     <div id="blogPosts">
-        <ul id="postsList"></ul>
+        <div id="unpublishedPosts">
+            <h3 id="unpublishedHeader"></h3>
+            <ul id="postsListUnPub"></ul>
+        </div>
+        <div id="publishedPosts">
+            <ul id="postsListPub"></ul>
+        </div>
     </div>
 
     <script>
@@ -24,13 +30,28 @@
             const res = await fetch("/api/posts");
             const posts = await res.json();
             posts.map((post) => {
-                const postsLi = document.createElement("li");
-                const postsA = document.createElement("a");
-                const postsList = document.getElementById("postsList");
-                postsA.textContent = post.title;
-                postsA.href = "/" + post.title.toLowerCase().replace(" ", "-");
-                postsLi.appendChild(postsA)
-                postsList.appendChild(postsLi);
+                if (post.published) {
+                    const postsLi = document.createElement("li");                    
+                    const postsA = document.createElement("a");
+                    const postsList = document.getElementById("postsListPub");
+                    postsA.textContent = post.title;
+                    postsA.href = "/" + post.title.toLowerCase().replace(" ", "-");
+                    postsLi.appendChild(postsA)
+                    postsList.appendChild(postsLi);
+                }
+                else {
+                    const unpublishedHeader = document.getElementById("unpublishedHeader");
+                    if (unpublishedHeader.textContent === "") {
+                        unpublishedHeader.textContent = "Drafts";
+                    }
+                    const postsLi = document.createElement("li");                    
+                    const postsA = document.createElement("a");
+                    const postsList = document.getElementById("postsListUnPub");
+                    postsA.textContent = post.title;
+                    postsA.href = "/" + post.title.toLowerCase().replace(" ", "-") + "/edit";
+                    postsLi.appendChild(postsA)
+                    postsList.appendChild(postsLi);
+                }
             })
         }
         loadUser();

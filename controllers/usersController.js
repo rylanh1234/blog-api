@@ -47,6 +47,10 @@ exports.commentPost = async (req, res) => {
 
 exports.postsPost = async (req, res) => {
     const prisma = require("../app");
+    let publishedStatus = true;
+    if (req.body.btnName === "save") {
+        publishedStatus = false;
+    }
     const post = await prisma.post.create({
         data: {
             author: {
@@ -54,7 +58,30 @@ exports.postsPost = async (req, res) => {
             },
             title: req.body.postTitle,
             content: req.body.postContent,
-            published: true,
+            published: publishedStatus,
+            createdAt: Date(),
+            slug: req.body.postTitle.toLowerCase().replace(" ", "-")
+        }
+    })
+    res.json(post);
+}
+
+exports.postsPatch = async (req, res) => {
+    const prisma = require("../app");
+    let publishedStatus = true;
+    if (req.body.btnName === "save") {
+        publishedStatus = false;
+    }
+    const { slug } = req.params;
+    const post = await prisma.post.update({
+        where: { slug: slug },
+        data: {
+            author: {
+                connect: { id: 1 }
+            },
+            title: req.body.postTitle,
+            content: req.body.postContent,
+            published: publishedStatus,
             createdAt: Date(),
             slug: req.body.postTitle.toLowerCase().replace(" ", "-")
         }

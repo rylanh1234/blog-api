@@ -7,5 +7,6 @@ usersRouter.get("/posts", usersController.postsGet);
 usersRouter.get("/posts/:slug", usersController.postBySlugGet);
 usersRouter.post("/posts/:slug", usersController.commentPost);
 usersRouter.post("/posts", usersController.postsPost);
+usersRouter.patch("/posts/:slug", usersController.postsPatch);
 
 module.exports = usersRouter;

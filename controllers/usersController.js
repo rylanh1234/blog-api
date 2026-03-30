@@ -69,11 +69,17 @@ exports.postsPost = async (req, res) => {
 
 exports.postsPatch = async (req, res) => {
     const prisma = require("../app");
-    let publishedStatus = true;
-    if (req.body.btnName === "save") {
-        publishedStatus = false;
-    }
+    let publishedStatus = false;
+    let firstPublish = false;
     const { slug } = req.params;
+    if (req.body.btnName === "post") {
+        publishedStatus = true;
+        const firstPublishCheck = await prisma.post.findUnique({
+            where: { slug: slug },
+            select: { createdAt: true }
+        })
+        firstPublish = firstPublishCheck.createdAt;
+    }
     const post = await prisma.post.update({
         where: { slug: slug },
         data: {
@@ -83,7 +89,8 @@ exports.postsPatch = async (req, res) => {
             title: req.body.postTitle,
             content: req.body.postContent,
             published: publishedStatus,
-            lastEdited: Date(),
+            createdAt: firstPublish ? firstPublish : Date(),
+            lastEdited: firstPublish ? Date() : null,
             slug: req.body.postTitle.toLowerCase().replace(" ", "-")
         }
     })

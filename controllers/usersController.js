@@ -59,8 +59,9 @@ exports.postsPost = async (req, res) => {
             title: req.body.postTitle,
             content: req.body.postContent,
             published: publishedStatus,
-            createdAt: Date(),
-            slug: req.body.postTitle.toLowerCase().replace(" ", "-")
+            createdAt: publishedStatus ? Date() : null, // create date for first publish
+            slug: req.body.postTitle.toLowerCase().replace(" ", "-"),
+            lastEdited: null
         }
     })
     res.json(post);
@@ -82,8 +83,20 @@ exports.postsPatch = async (req, res) => {
             title: req.body.postTitle,
             content: req.body.postContent,
             published: publishedStatus,
-            createdAt: Date(),
+            lastEdited: Date(),
             slug: req.body.postTitle.toLowerCase().replace(" ", "-")
+        }
+    })
+    res.json(post);
+}
+
+exports.unpublishPatch = async (req, res) => {
+    const prisma = require("../app");
+    const { slug } = req.params;
+    const post = await prisma.post.update({
+        where: { slug: slug },
+        data: {
+            published: false
         }
     })
     res.json(post);

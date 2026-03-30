@@ -9,6 +9,7 @@
     <h1><a href="/">Blog API</a></h1>
     <h2 id="postTitle"></h2><h4 id="postAuthor"></h4>
     <p id="postContent"></p>
+    <button id="unpublishBtn">Unpublish</button>
     <div id="postComments">
         <h2>Comments</h2>
         <form id ="postCommentsForm">
@@ -58,7 +59,20 @@
             })
         }
 
+        async function loadUnpublishBtn() {
+            const unpublishBtn = document.getElementById("unpublishBtn");
+            unpublishBtn.addEventListener(("click"), async (e) => {
+                const slug = window.location.pathname.split("/")[1];
+                const res = await fetch(`/api/posts/${slug}/unpublish`, {
+                    method: "PATCH",
+                });
+                const post = await res.json();
+                window.location.href = "/";
+            });
+        }
+
         loadPost();
+        loadUnpublishBtn();
     </script>
 </body>
 </html>

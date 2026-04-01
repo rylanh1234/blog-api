@@ -7,6 +7,7 @@
 </head>
 <body>
     <h1><a href="/">Blog API</a></h1>
+    <button id="deleteBtn">Delete</button>
     <form id ="createPostForm">
         <div class="inputContainer">
             <div class="formGroup">
@@ -45,7 +46,20 @@
             })
         }
 
+        async function loadDeleteBtn() {
+            const deleteBtn = document.getElementById("deleteBtn");
+            deleteBtn.addEventListener(("click"), async (e) => {
+                const slug = window.location.pathname.split("/")[1];
+                const res = await fetch(`/api/posts/${slug}`, {
+                    method: "DELETE",
+                });
+                const post = await res.json();
+                window.location.href = "/";
+            });
+        }
+
         loadEditPost();
+        loadDeleteBtn();
     </script>
 </body>
 </html>

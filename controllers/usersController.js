@@ -108,3 +108,12 @@ exports.unpublishPatch = async (req, res) => {
     })
     res.json(post);
 }
+
+exports.postDelete = async (req, res) => {
+    const prisma = require("../app");
+    const { slug } = req.params;
+    const post = await prisma.post.delete({
+        where: { slug: slug }
+    })
+    res.json(post);
+}

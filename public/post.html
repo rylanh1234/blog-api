@@ -10,6 +10,7 @@
     <h2 id="postTitle"></h2><h4 id="postAuthor"></h4>
     <p id="postContent"></p>
     <button id="unpublishBtn">Unpublish</button>
+    <button id="deleteBtn">Delete</button>
     <div id="postComments">
         <h2>Comments</h2>
         <form id ="postCommentsForm">
@@ -71,8 +72,21 @@
             });
         }
 
+        async function loadDeleteBtn() {
+            const deleteBtn = document.getElementById("deleteBtn");
+            deleteBtn.addEventListener(("click"), async (e) => {
+                const slug = window.location.pathname.split("/")[1];
+                const res = await fetch(`/api/posts/${slug}`, {
+                    method: "DELETE",
+                });
+                const post = await res.json();
+                window.location.href = "/";
+            });
+        }
+
         loadPost();
         loadUnpublishBtn();
+        loadDeleteBtn();
     </script>
 </body>
 </html>

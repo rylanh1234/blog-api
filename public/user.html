@@ -54,8 +54,82 @@
                 }
             })
         }
-        loadUser();
-        loadPosts();
+
+        async function loadLogin() {
+            const loginHeader = document.createElement("h3");
+            loginHeader.textContent = "Please log in";
+
+            const loginForm = document.createElement("form");
+
+            const usernameLabel = document.createElement("label");
+            usernameLabel.htmlFor = "username";
+            usernameLabel.textContent = "Email";
+
+            const usernameInput = document.createElement("input");
+            usernameInput.id = "username";
+            usernameInput.name = "username";
+            usernameInput.placeholder = "email";
+            usernameInput.type = "text";
+
+            const passwordLabel = document.createElement("label");
+            passwordLabel.htmlFor = "password";
+            passwordLabel.textContent = "Password";
+            
+            const passwordInput = document.createElement("input");
+            passwordInput.id = "password";
+            passwordInput.name = "password";
+            passwordInput.type = "password";
+
+            const submitBtn = document.createElement("button");
+            submitBtn.type = "submit";
+            submitBtn.textContent = "Log In";
+
+            loginForm.appendChild(loginHeader);
+            loginForm.appendChild(usernameLabel);
+            loginForm.appendChild(usernameInput);
+            loginForm.appendChild(passwordLabel);
+            loginForm.appendChild(passwordInput);
+            loginForm.appendChild(submitBtn);
+            document.body.append(loginForm);
+
+            loginForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const data = Object.fromEntries(new FormData(loginForm));
+                const res = await fetch("/api/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+                const { token } = await res.json(); // get token
+                localStorage.setItem("token", token); // store token
+                window.location.reload();
+            })
+        }
+        
+        async function isVerified() {
+            const token = localStorage.getItem("token"); // access token
+            let user = null;
+            if (token !== "undefined") {
+                const res = await fetch("/api/protected", { // verify token
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                const data = await res.json();
+                user = data.user; // get user
+            }
+            if (user) {
+                loadUser();
+                loadPosts();
+            }
+            else {
+                loadLogin();
+            }
+        }
+
+        isVerified();
     </script>
 </body>
 </html>

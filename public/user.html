@@ -9,6 +9,7 @@
     <h1>Blog API</h1>
     <div id="userName"></div>
     <a href="/create">Create</a>
+    <div id="logoutDiv"></div>
     <div id="blogPosts">
         <div id="unpublishedPosts">
             <h3 id="unpublishedHeader"></h3>
@@ -25,6 +26,16 @@
             const user = await res.json();
             const userName = document.getElementById("userName");
             userName.textContent = "Welcome Back " + user[0].name;
+
+            // logout
+            const logoutBtn = document.createElement("button");
+            logoutBtn.textContent = "Log Out";
+            const logoutDiv = document.getElementById("logoutDiv");
+            logoutDiv.appendChild(logoutBtn);
+            logoutBtn.addEventListener("click", () => {
+                localStorage.setItem("token", "undefined");
+                window.location.href = "/";
+            })
         }
         async function loadPosts() {
             const res = await fetch("/api/posts");
@@ -117,6 +128,10 @@
                         Authorization: `Bearer ${token}`
                     }
                 })
+                if (res.status === 401) {
+                    localStorage.setItem("token", "undefined"); // if token expired/is invalid, remove it and redirect login
+                    window.location.href = "/";
+                }
                 const data = await res.json();
                 user = data.user; // get user
             }

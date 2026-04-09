@@ -7,6 +7,7 @@
 </head>
 <body>
     <h1><a href="/">Blog API</a></h1>
+    <div id="logoutDiv"></div>
     <form id ="createPostForm">
         <div class="inputContainer">
             <div class="formGroup">
@@ -37,7 +38,19 @@
             })
         }
 
+        async function loadLogoutBtn() {
+            const logoutBtn = document.createElement("button");
+            logoutBtn.textContent = "Log Out";
+            const logoutDiv = document.getElementById("logoutDiv");
+            logoutDiv.appendChild(logoutBtn);
+            logoutBtn.addEventListener("click", () => {
+                localStorage.setItem("token", "undefined");
+                window.location.href = "/";
+            })
+        }
+
         loadCreatePost();
+        loadLogoutBtn();
     </script>
 </body>
 </html>

@@ -7,6 +7,7 @@ usersRouter.get("/posts", usersController.postsGet);
 usersRouter.get("/posts/:slug", usersController.postBySlugGet);
 usersRouter.post("/posts/:slug", usersController.commentPost);
 usersRouter.post("/posts", usersController.postsPost);
+usersRouter.post("/user", usersController.usersPost);
 usersRouter.patch("/posts/:slug", usersController.postsPatch);
 usersRouter.patch("/posts/:slug/unpublish", usersController.unpublishPatch);
 usersRouter.delete("/posts/:slug", usersController.postDelete);

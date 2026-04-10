@@ -19,6 +19,8 @@
             <ul id="postsListPub"></ul>
         </div>
     </div>
+    <div id="loginDiv"></div>
+    <div id="signupDiv"></div>
 
     <script>
         async function loadUser() {
@@ -101,7 +103,8 @@
             loginForm.appendChild(passwordLabel);
             loginForm.appendChild(passwordInput);
             loginForm.appendChild(submitBtn);
-            document.body.append(loginForm);
+            const loginDiv = document.getElementById("loginDiv");
+            loginDiv.appendChild(loginForm);
 
             loginForm.addEventListener("submit", async (e) => {
                 e.preventDefault();
@@ -117,6 +120,13 @@
                 localStorage.setItem("token", token); // store token
                 window.location.reload();
             })
+
+            // sign up
+            const signupDiv = document.getElementById("signupDiv");
+            const signupA = document.createElement("a");
+            signupA.textContent = "Sign Up";
+            signupA.href = "/sign-up";
+            signupDiv.appendChild(signupA);
         }
         
         async function isVerified() {

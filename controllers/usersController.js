@@ -117,3 +117,15 @@ exports.postDelete = async (req, res) => {
     })
     res.json(post);
 }
+
+exports.usersPost = async (req, res) => {
+    const prisma = require("../app");
+    const user = await prisma.user.create({
+        data: {
+            name: req.body.userName,
+            email: req.body.email,
+            password: req.body.password
+        }
+    })
+    res.json(user);
+}

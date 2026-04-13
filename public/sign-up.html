@@ -7,6 +7,7 @@
 </head>
 <body>
     <h1><a href="/">Blog API</a></h1>
+    <div id="errorsDiv"></div>
     <form id ="signupForm">
         <div class="inputContainer">
             <div class="formGroup">
@@ -37,7 +38,18 @@
                     body: JSON.stringify(data)
                 });
                 const post = await res.json();
-                window.location.href = "/";
+                if (Array.isArray(post)) {
+                    const errorsDiv = document.getElementById("errorsDiv");
+                    errorsDiv.replaceChildren();
+                    post.forEach((error) => {
+                        const errorDiv = document.createElement("div");
+                        errorDiv.textContent = error.msg;
+                        errorsDiv.appendChild(errorDiv);
+                    })
+                }
+                else {
+                    window.location.href = "/";
+                }
             })
         }
 

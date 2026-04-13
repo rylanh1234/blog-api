@@ -118,14 +118,41 @@ exports.postDelete = async (req, res) => {
     res.json(post);
 }
 
-exports.usersPost = async (req, res) => {
-    const prisma = require("../app");
-    const user = await prisma.user.create({
-        data: {
-            name: req.body.userName,
-            email: req.body.email,
-            password: req.body.password
+const { body, validationResult, matchedData } = require("express-validator");
+const bcrypt = require("bcryptjs");
+const alphaErr = "must only contain letters.";
+const lengthErr = "must be between 1 and 10 characters.";
+const emailErr = "must be a valid email.";
+const pwLengthErr = "must be between 6 and 30 characters.";
+
+const validateUser = [
+        //.trim(), .escape(), and .normalizeEmail() to sanitize
+        body("userName").trim().escape()
+        .isAlpha().withMessage(`First name ${alphaErr}`)
+        .isLength({ min: 1, max: 10 }).withMessage(`Name ${lengthErr}`),
+        body("email").isEmail().normalizeEmail().withMessage(`Email ${emailErr}`),
+        body("password").trim().escape()
+        .isLength({ min: 6, max: 30 }).withMessage(`Password ${pwLengthErr}`),
+];
+
+exports.usersPost = [
+    validateUser,
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.json(errors.array());
         }
-    })
-    res.json(user);
-}
+    
+        const { userName, email, password } = matchedData(req);
+        const prisma = require("../app");
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await prisma.user.create({
+            data: {
+                name: userName,
+                email: email,
+                password: hashedPassword
+            }
+        })
+        res.json(user);
+    }
+];

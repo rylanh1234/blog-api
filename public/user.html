@@ -8,7 +8,7 @@
 <body>
     <h1>Blog API</h1>
     <div id="userName"></div>
-    <a href="/create">Create</a>
+    <a href="/create" id="create" hidden>Create</a>
     <div id="logoutDiv"></div>
     <div id="blogPosts">
         <div id="unpublishedPosts">
@@ -28,6 +28,8 @@
             const user = await res.json();
             const userName = document.getElementById("userName");
             userName.textContent = "Welcome Back " + user[0].name;
+            const create = document.getElementById("create");
+            create.hidden = false;
 
             // logout
             const logoutBtn = document.createElement("button");
@@ -52,7 +54,14 @@
                     postsLi.appendChild(postsA)
                     postsList.appendChild(postsLi);
                 }
-                else {
+            })
+        }
+
+        async function loadDrafts() {
+            const res = await fetch("/api/posts");
+            const posts = await res.json();
+            posts.map((post) => {
+                if (!post.published) {
                     const unpublishedHeader = document.getElementById("unpublishedHeader");
                     if (unpublishedHeader.textContent === "") {
                         unpublishedHeader.textContent = "Drafts";
@@ -62,11 +71,10 @@
                     const postsList = document.getElementById("postsListUnPub");
                     postsA.textContent = post.title;
                     postsA.href = "/" + post.title.toLowerCase().replace(" ", "-") + "/edit";
-                    postsLi.appendChild(postsA)
+                    postsLi.appendChild(postsA);
                     postsList.appendChild(postsLi);
+                }})
                 }
-            })
-        }
 
         async function loadLogin() {
             const loginHeader = document.createElement("h3");
@@ -147,7 +155,7 @@
             }
             if (user) {
                 loadUser();
-                loadPosts();
+                loadDrafts();
             }
             else {
                 loadLogin();
@@ -155,6 +163,7 @@
         }
 
         isVerified();
+        loadPosts();
     </script>
 </body>
 </html>

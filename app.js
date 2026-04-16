@@ -9,6 +9,7 @@ const { PrismaClient } = require('./generated/prisma/client');
 const passport = require("passport");
 const passportJWT = require("passport-jwt");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 app.use(passport.initialize());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -43,7 +44,8 @@ passport.use(
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
   const user = await prisma.user.findUnique({ where: { email: username } });
-  if (!user || user.password !== password) {
+  const match = await bcrypt.compare(password, user.password);
+  if (!user || !match) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 

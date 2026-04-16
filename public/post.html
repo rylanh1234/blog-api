@@ -7,14 +7,15 @@
 </head>
 <body>
     <h1><a href="/">Blog API</a></h1>
-    <div id="logoutDiv"></div>
+    <div id="logoutDiv" hidden></div>
     <h2 id="postTitle"></h2><h4 id="postAuthor"></h4>
     <p id="postContent"></p>
-    <button id="unpublishBtn">Unpublish</button>
-    <button id="deleteBtn">Delete</button>
+    <button id="unpublishBtn" hidden>Unpublish</button>
+    <button id="deleteBtn" hidden>Delete</button>
     <div id="postComments">
         <h2>Comments</h2>
-        <form id ="postCommentsForm">
+        <h3 id="loginToComment">Log in to comment</h3>
+        <form id ="postCommentsForm" hidden>
             <div class="inputContainer">
                 <div class="formGroup">
                     <input type="text" id="commentText" name="commentText" placeholder="Add a comment" required>
@@ -96,10 +97,42 @@
             })
         }
 
+        async function isVerified() {
+            const token = localStorage.getItem("token"); // access token
+            let user = null;
+            if (token !== "undefined") {
+                const res = await fetch("/api/protected", { // verify token
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                if (res.status === 401) {
+                    localStorage.setItem("token", "undefined"); // if token expired/is invalid, remove it and redirect login
+                    window.location.href = "/";
+                }
+                const data = await res.json();
+                user = data.user; // get user
+            }
+            if (user) {
+                const logoutDiv = document.getElementById("logoutDiv");
+                const unpublishBtn = document.getElementById("unpublishBtn");
+                const deleteBtn = document.getElementById("deleteBtn");
+                const loginToComment = document.getElementById("loginToComment");
+                const postCommentsForm = document.getElementById("postCommentsForm");
+                logoutDiv.hidden = false;
+                unpublishBtn.hidden = false;
+                deleteBtn.hidden = false;
+                loginToComment.hidden = true;
+                postCommentsForm.hidden = false; 
+                
+                loadUnpublishBtn();
+                loadDeleteBtn();
+                loadLogoutBtn();
+            }
+        }
+
+        isVerified();
         loadPost();
-        loadUnpublishBtn();
-        loadDeleteBtn();
-        loadLogoutBtn();
     </script>
 </body>
 </html>

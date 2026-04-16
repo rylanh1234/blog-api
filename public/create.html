@@ -7,8 +7,8 @@
 </head>
 <body>
     <h1><a href="/">Blog API</a></h1>
-    <div id="logoutDiv"></div>
-    <form id ="createPostForm">
+    <div id="logoutDiv" hidden></div>
+    <form id ="createPostForm" hidden>
         <div class="inputContainer">
             <div class="formGroup">
                 <label for="postTitle">Title</label>
@@ -49,8 +49,36 @@
             })
         }
 
-        loadCreatePost();
-        loadLogoutBtn();
+        async function isVerified() {
+            const token = localStorage.getItem("token"); // access token
+            let user = null;
+            if (token !== "undefined") {
+                const res = await fetch("/api/protected", { // verify token
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                if (res.status === 401) {
+                    localStorage.setItem("token", "undefined"); // if token expired/is invalid, remove it and redirect login
+                    window.location.href = "/";
+                }
+                const data = await res.json();
+                user = data.user; // get user
+            }
+            if (user) {
+                const logoutDiv = document.getElementById("logoutDiv");
+                const createPostForm = document.getElementById("createPostForm");
+                logoutDiv.hidden = false;
+                createPostForm.hidden = false;
+                loadCreatePost();
+                loadLogoutBtn();   
+            }
+            else {
+                window.location.href = "/";
+            }
+        }
+
+        isVerified();
     </script>
 </body>
 </html>

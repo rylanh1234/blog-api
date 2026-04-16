@@ -54,7 +54,7 @@ exports.postsPost = async (req, res) => {
     const post = await prisma.post.create({
         data: {
             author: {
-                connect: { id: 1 }
+                connect: { id: req.body.authorId }
             },
             title: req.body.postTitle,
             content: req.body.postContent,

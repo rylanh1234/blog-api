@@ -23,11 +23,11 @@
     <div id="signupDiv"></div>
 
     <script>
-        async function loadUser() {
+        async function loadUser(user) {
             const res = await fetch("/api/user");
-            const user = await res.json();
+            const users = await res.json();
             const userName = document.getElementById("userName");
-            userName.textContent = "Welcome Back " + user[0].name;
+            userName.textContent = "Welcome Back " + user.name;
             const create = document.getElementById("create");
             create.hidden = false;
 
@@ -57,24 +57,26 @@
             })
         }
 
-        async function loadDrafts() {
+        async function loadDrafts(user) {
             const res = await fetch("/api/posts");
             const posts = await res.json();
             posts.map((post) => {
-                if (!post.published) {
-                    const unpublishedHeader = document.getElementById("unpublishedHeader");
-                    if (unpublishedHeader.textContent === "") {
-                        unpublishedHeader.textContent = "Drafts";
-                    }
-                    const postsLi = document.createElement("li");                    
-                    const postsA = document.createElement("a");
-                    const postsList = document.getElementById("postsListUnPub");
-                    postsA.textContent = post.title;
-                    postsA.href = "/" + post.title.toLowerCase().replace(" ", "-") + "/edit";
-                    postsLi.appendChild(postsA);
-                    postsList.appendChild(postsLi);
-                }})
-                }
+                if (post.authorId === user.id) {
+                    if (!post.published) {
+                        const unpublishedHeader = document.getElementById("unpublishedHeader");
+                        if (unpublishedHeader.textContent === "") {
+                            unpublishedHeader.textContent = "Drafts";
+                        }
+                        const postsLi = document.createElement("li");                    
+                        const postsA = document.createElement("a");
+                        const postsList = document.getElementById("postsListUnPub");
+                        postsA.textContent = post.title;
+                        postsA.href = "/" + post.title.toLowerCase().replace(" ", "-") + "/edit";
+                        postsLi.appendChild(postsA);
+                        postsList.appendChild(postsLi);
+                    }}
+                })
+            }
 
         async function loadLogin() {
             const loginHeader = document.createElement("h3");
@@ -154,8 +156,8 @@
                 user = data.user; // get user
             }
             if (user) {
-                loadUser();
-                loadDrafts();
+                loadUser(user);
+                loadDrafts(user);
             }
             else {
                 loadLogin();

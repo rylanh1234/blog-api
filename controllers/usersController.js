@@ -60,7 +60,7 @@ exports.postsPost = async (req, res) => {
             content: req.body.postContent,
             published: publishedStatus,
             createdAt: publishedStatus ? Date() : null, // create date for first publish
-            slug: req.body.postTitle.toLowerCase().replace(" ", "-"),
+            slug: req.body.postTitle.toLowerCase().replace(/\s/g, "-"), // \s and /g to replace all whitespace with -
             lastEdited: null
         }
     })
@@ -84,14 +84,14 @@ exports.postsPatch = async (req, res) => {
         where: { slug: slug },
         data: {
             author: {
-                connect: { id: 1 }
+                connect: { id: req.body.authorId }
             },
             title: req.body.postTitle,
             content: req.body.postContent,
             published: publishedStatus,
             createdAt: firstPublish ? firstPublish : Date(),
             lastEdited: firstPublish ? Date() : null,
-            slug: req.body.postTitle.toLowerCase().replace(" ", "-")
+            slug: req.body.postTitle.toLowerCase().replace(/\s/g, "-")
         }
     })
     res.json(post);

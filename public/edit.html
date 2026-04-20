@@ -23,40 +23,48 @@
         <button type="submit" name="post">Post Blog</button>
     </form>
     <script>
-        async function loadEditPost() {
+        async function loadEditPost(user) {
             const slug = window.location.pathname.split("/")[1];
-            const createPostForm = document.getElementById("createPostForm");
-            const postTitle = document.getElementById("postTitle");
-            const postContent = document.getElementById("postContent");
             const res = await fetch(`/api/posts/${slug}`);
             const savedPost = await res.json();
-            postTitle.value = savedPost.title;
-            postContent.value = savedPost.content;
+            if (savedPost.authorId === user.id) {
+                const createPostForm = document.getElementById("createPostForm");
+                createPostForm.hidden = false; 
+                const postTitle = document.getElementById("postTitle");
+                const postContent = document.getElementById("postContent");
+                postTitle.value = savedPost.title;
+                postContent.value = savedPost.content;
 
-            createPostForm.addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const data = Object.fromEntries(new FormData(createPostForm));
-                Object.assign(data, { btnName: e.submitter.name });
-                const res = await fetch(`/api/posts/${slug}`, {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                });
-                const post = await res.json();
-                window.location.href = "/";
-            })
+                createPostForm.addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const data = Object.fromEntries(new FormData(createPostForm));
+                    Object.assign(data, { btnName: e.submitter.name, authorId: user.id });
+                    const res = await fetch(`/api/posts/${slug}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(data)
+                    });
+                    const post = await res.json();
+                    window.location.href = "/";
+                })
+            }
         }
 
-        async function loadDeleteBtn() {
+        async function loadDeleteBtn(user) {
             const deleteBtn = document.getElementById("deleteBtn");
-            deleteBtn.addEventListener(("click"), async (e) => {
-                const slug = window.location.pathname.split("/")[1];
-                const res = await fetch(`/api/posts/${slug}`, {
-                    method: "DELETE",
+            const slug = window.location.pathname.split("/")[1];
+            const res = await fetch(`/api/posts/${slug}`);
+            const post = await res.json();
+            if (post.authorId === user.id) {
+                deleteBtn.hidden = false;
+                deleteBtn.addEventListener(("click"), async (e) => {
+                    const res = await fetch(`/api/posts/${slug}`, {
+                        method: "DELETE",
+                    });
+                    const post = await res.json();
+                    window.location.href = "/";
                 });
-                const post = await res.json();
-                window.location.href = "/";
-            });
+            }
         }
 
         async function loadLogoutBtn() {
@@ -88,13 +96,9 @@
             }
             if (user) {
                 const logoutDiv = document.getElementById("logoutDiv");
-                const deleteBtn = document.getElementById("deleteBtn");
-                const createPostForm = document.getElementById("createPostForm");
                 logoutDiv.hidden = false;
-                deleteBtn.hidden = false;
-                createPostForm.hidden = false; 
-                loadEditPost();
-                loadDeleteBtn();
+                loadEditPost(user);
+                loadDeleteBtn(user);
                 loadLogoutBtn();
             }
             else {

@@ -62,28 +62,38 @@
             })
         }
 
-        async function loadUnpublishBtn() {
+        async function loadUnpublishBtn(user) {
             const unpublishBtn = document.getElementById("unpublishBtn");
-            unpublishBtn.addEventListener(("click"), async (e) => {
-                const slug = window.location.pathname.split("/")[1];
-                const res = await fetch(`/api/posts/${slug}/unpublish`, {
-                    method: "PATCH",
+            const slug = window.location.pathname.split("/")[1];
+            const res = await fetch(`/api/posts/${slug}`);
+            const post = await res.json();
+            if (post.authorId === user.id) {
+                unpublishBtn.hidden = false;
+                unpublishBtn.addEventListener(("click"), async (e) => {
+                    const res = await fetch(`/api/posts/${slug}/unpublish`, {
+                        method: "PATCH",
+                    });
+                    const unpublishedPost = await res.json();
+                    window.location.href = "/";
                 });
-                const post = await res.json();
-                window.location.href = "/";
-            });
+            }
         }
 
-        async function loadDeleteBtn() {
+        async function loadDeleteBtn(user) {
             const deleteBtn = document.getElementById("deleteBtn");
-            deleteBtn.addEventListener(("click"), async (e) => {
-                const slug = window.location.pathname.split("/")[1];
-                const res = await fetch(`/api/posts/${slug}`, {
-                    method: "DELETE",
+            const slug = window.location.pathname.split("/")[1];
+            const res = await fetch(`/api/posts/${slug}`);
+            const post = await res.json();
+            if (post.authorId === user.id) {
+                deleteBtn.hidden = false;
+                deleteBtn.addEventListener(("click"), async (e) => {
+                    const res = await fetch(`/api/posts/${slug}`, {
+                        method: "DELETE",
+                    });
+                    const deletedPost = await res.json();
+                    window.location.href = "/";
                 });
-                const post = await res.json();
-                window.location.href = "/";
-            });
+            }
         }
 
         async function loadLogoutBtn() {
@@ -115,18 +125,14 @@
             }
             if (user) {
                 const logoutDiv = document.getElementById("logoutDiv");
-                const unpublishBtn = document.getElementById("unpublishBtn");
-                const deleteBtn = document.getElementById("deleteBtn");
                 const loginToComment = document.getElementById("loginToComment");
                 const postCommentsForm = document.getElementById("postCommentsForm");
                 logoutDiv.hidden = false;
-                unpublishBtn.hidden = false;
-                deleteBtn.hidden = false;
                 loginToComment.hidden = true;
                 postCommentsForm.hidden = false; 
                 
-                loadUnpublishBtn();
-                loadDeleteBtn();
+                loadUnpublishBtn(user);
+                loadDeleteBtn(user);
                 loadLogoutBtn();
             }
         }

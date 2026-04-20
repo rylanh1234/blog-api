@@ -50,7 +50,7 @@
                     const postsA = document.createElement("a");
                     const postsList = document.getElementById("postsListPub");
                     postsA.textContent = post.title;
-                    postsA.href = "/" + post.title.toLowerCase().replace(" ", "-");
+                    postsA.href = "/" + post.title.toLowerCase().replace(/\s/g, "-");
                     postsLi.appendChild(postsA)
                     postsList.appendChild(postsLi);
                 }
@@ -71,7 +71,7 @@
                         const postsA = document.createElement("a");
                         const postsList = document.getElementById("postsListUnPub");
                         postsA.textContent = post.title;
-                        postsA.href = "/" + post.title.toLowerCase().replace(" ", "-") + "/edit";
+                        postsA.href = "/" + post.title.toLowerCase().replace(/\s/g, "-") + "/edit";
                         postsLi.appendChild(postsA);
                         postsList.appendChild(postsLi);
                     }}

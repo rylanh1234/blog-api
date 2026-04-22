@@ -34,7 +34,7 @@ exports.commentPost = async (req, res) => {
             comments: {
                 create: [{
                     author: {
-                        connect: { id: 1 }
+                        connect: { id: req.body.authorId }
                     },
                     content: req.body.commentText,
                     createdAt: Date()

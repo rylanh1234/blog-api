@@ -44,21 +44,8 @@
             post.comments.map((comment) => {
                 const postCommentsLi = document.createElement("li");
                 const postCommentsList = document.getElementById("postCommentsList");
-                postCommentsLi.textContent = comment.author.name + " · MM/DD/YYYY : " + comment.content;
+                postCommentsLi.textContent = comment.author.name + " · " + dateFormat(comment.createdAt) + " : " + comment.content;
                 postCommentsList.appendChild(postCommentsLi);
-            })
-
-            const postCommentsForm = document.getElementById("postCommentsForm");
-            postCommentsForm.addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const data = Object.fromEntries(new FormData(postCommentsForm)); // get input from form and convert the pair into JS object
-                const res = await fetch(`/api/posts/${slug}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" }, // specify JSON
-                    body: JSON.stringify(data) // JS object into JS string
-                });
-                const comment = await res.json();
-                window.location.reload(); // refresh page after posting comment
             })
         }
 
@@ -107,6 +94,24 @@
             })
         }
 
+        async function loadPostCommentsForm(user) {
+            const postCommentsForm = document.getElementById("postCommentsForm");
+            postCommentsForm.hidden = false;
+            const slug = window.location.pathname.split("/")[1];
+            postCommentsForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const data = Object.fromEntries(new FormData(postCommentsForm)); // get input from form and convert the pair into JS object
+                Object.assign(data, { authorId: user.id });
+                const res = await fetch(`/api/posts/${slug}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }, // specify JSON
+                    body: JSON.stringify(data) // JS object into JS string
+                });
+                const comment = await res.json();
+                window.location.reload(); // refresh page after posting comment
+            })
+        }
+
         async function isVerified() {
             const token = localStorage.getItem("token"); // access token
             let user = null;
@@ -126,15 +131,27 @@
             if (user) {
                 const logoutDiv = document.getElementById("logoutDiv");
                 const loginToComment = document.getElementById("loginToComment");
-                const postCommentsForm = document.getElementById("postCommentsForm");
                 logoutDiv.hidden = false;
-                loginToComment.hidden = true;
-                postCommentsForm.hidden = false; 
+                loginToComment.hidden = true; 
                 
                 loadUnpublishBtn(user);
                 loadDeleteBtn(user);
                 loadLogoutBtn();
+                loadPostCommentsForm(user);
             }
+        }
+
+        // wrap date from db in new Date() to handle null, strings, or Dates
+        // and then changes format to M D, Y at XX:XX X.m.
+        function dateFormat(date) { 
+            const formattedDate = new Date(date).toLocaleString(`en-CA`, {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })
+            return formattedDate;
         }
 
         isVerified();
